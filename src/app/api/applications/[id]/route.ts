@@ -5,9 +5,10 @@ import jwt from "jsonwebtoken";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const token = req.cookies.get("token")?.value;
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,7 +22,7 @@ export async function PATCH(
     await connectDB();
     const { status } = await req.json();
     const app = await Application.findByIdAndUpdate(
-      params.id,
+      id,
       { status },
       { new: true },
     );
