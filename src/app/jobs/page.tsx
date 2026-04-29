@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -24,7 +24,7 @@ const categories = [
 ];
 const workModes = ["On-site", "Remote", "Hybrid"];
 
-export default function JobsPage() {
+function JobsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -289,4 +289,29 @@ function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), delay);
   }) as T;
+}
+
+export default function JobsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white">
+          <Navbar />
+          <div className="px-8 py-8 max-w-7xl mx-auto">
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-16 bg-gray-50 rounded-xl animate-pulse"
+                />
+              ))}
+            </div>
+          </div>
+          <Footer />
+        </div>
+      }
+    >
+      <JobsPageContent />
+    </Suspense>
+  );
 }
